@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoleCraft - Step into Style &amp; Comfort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-slide-in {
+      animation: slideIn 0.6s ease-out forwards;
+    }
+    
+    .product-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .cart-badge {
+      transition: transform 0.2s ease;
+    }
+    
+    .cart-badge.pulse {
+      animation: pulse 0.3s ease;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 40;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease-out;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #64748b;
+      transition: color 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+      color: #1e293b;
+    }
+
+    .product-image-modal {
+      width: 100%;
+      height: 300px;
+      object-fit: contain;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .product-emoji-modal {
+      font-size: 120px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full w-full">
+  <div id="app" class="h-full w-full overflow-auto"><!-- Navigation -->
+   <nav id="navbar" class="sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="flex justify-between items-center h-16">
+<div class="flex items-center space-x-3 cursor-pointer" onclick="showPage('home')">
+	       <img src="logo.jpg" alt="SoleCraft Logo" class="h-10 w-10 object-contain">
+	       <div class="text-2xl font-bold" id="nav-company-name">SoleCraft</div>
+	      </div>
+      <div class="flex items-center space-x-6">
+       <button onclick="showPage('home')" class="nav-link font-semibold hover:opacity-70 transition-opacity">หน้าแรก</button>
+       <button onclick="showPage('products')" class="nav-link font-semibold hover:opacity-70 transition-opacity">สินค้า</button>
+       <button onclick="showPage('contact')" class="nav-link font-semibold hover:opacity-70 transition-opacity">ติดต่อเรา</button>
+       <button onclick="showPage('signup')" class="nav-link font-semibold hover:opacity-70 transition-opacity">สมัครสมาชิก</button>
+       <button onclick="showPage('cart')" class="relative">
+        <span class="text-2xl">🛒</span>
+        <span id="cart-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center" style="display: none;"></span>
+       </button>
+      </div>
+     </div>
+    </div>
+   </nav><!-- Home Page -->
+   <div id="home-page" class="page">
+    <div class="min-h-screen flex items-center justify-center px-4">
+<div class="text-center space-y-8 animate-slide-in flex flex-col items-center">
+	      <img src="logo.jpg" alt="SoleCraft Logo" class="h-48 w-48 object-contain mb-4">
+	      <h1 id="home-company-name" class="text-6xl font-bold">SoleCraft</h1>
+      <p id="home-slogan" class="text-3xl opacity-80">Step into Style & Comfort</p>
+      <div class="grid md:grid-cols-3 gap-8 mt-12">
+       <div class="p-6 rounded-2xl shadow-lg">
+        <div class="text-5xl mb-4">👟</div>
+        <h3 class="text-xl font-bold mb-2">คุณภาพสูง</h3>
+        <p class="opacity-70">รองเท้าที่ทำจากวัสดุคุณภาพดีที่สุด</p>
+       </div>
+       <div class="p-6 rounded-2xl shadow-lg">
+        <div class="text-5xl mb-4">💰</div>
+        <h3 class="text-xl font-bold mb-2">ราคาเหมาะสม</h3>
+        <p class="opacity-70">ราคาที่ยุติธรรมสำหรับทุกคน</p>
+       </div>
+       <div class="p-6 rounded-2xl shadow-lg">
+        <div class="text-5xl mb-4">🚚</div>
+        <h3 class="text-xl font-bold mb-2">จัดส่งรวดเร็ว</h3>
+        <p class="opacity-70">จัดส่งฟรีสำหรับสั่งซื้อทั่วประเทศ</p>
+       </div>
+      </div>
+      <button onclick="showPage('products')" class="mt-8 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+       เลือกซื้อสินค้า
+      </button>
+     </div>
+    </div>
+   </div><!-- Products Page -->
+   <div id="products-page" class="page" style="display: none;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+     <h2 class="text-4xl font-bold mb-12 text-center">สินค้าของเรา</h2>
+     <div id="products-grid" class="grid md:grid-cols-3 gap-8"><!-- Products will be rendered here -->
+     </div>
+    </div>
+   </div><!-- Contact Page -->
+   <div id="contact-page" class="page" style="display: none;">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+     <h2 class="text-4xl font-bold mb-12 text-center">ติดต่อเรา</h2>
+     <div class="rounded-2xl shadow-xl p-8">
+      <div class="grid md:grid-cols-2 gap-8">
+       <div>
+        <h3 class="text-2xl font-bold mb-6">ข้อมูลติดต่อ</h3>
+        <div class="space-y-4">
+         <div class="flex items-start space-x-3"><span class="text-2xl">📍</span>
+          <div>
+           <h4 class="font-semibold mb-1">ที่อยู่</h4>
+           <p id="contact-address" class="opacity-80">123 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110</p>
+          </div>
+         </div>
+         <div class="flex items-start space-x-3"><span class="text-2xl">📞</span>
+          <div>
+           <h4 class="font-semibold mb-1">เบอร์โทรศัพท์</h4>
+           <p id="contact-phone" class="opacity-80">084-980-9044</p>
+          </div>
+         </div>
+         <div class="flex items-start space-x-3"><span class="text-2xl">✉️</span>
+          <div>
+           <h4 class="font-semibold mb-1">อีเมล</h4>
+           <p id="contact-email" class="opacity-80">dooooom1234567890@gmail.com</p>
+          </div>
+         </div>
+         <div class="flex items-start space-x-3"><span class="text-2xl">🕐</span>
+          <div>
+           <h4 class="font-semibold mb-1">เวลาทำการ</h4>
+           <p class="opacity-80">จันทร์ - ศุกร์: 9:00 - 18:00</p>
+           <p class="opacity-80">เสาร์ - อาทิตย์: 10:00 - 17:00</p>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div>
+        <h3 class="text-2xl font-bold mb-6">แผนที่</h3>
+        <div class="w-full h-64 rounded-xl overflow-hidden shadow-lg">
+         <div class="w-full h-full flex items-center justify-center text-6xl">
+          🗺️
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Sign Up Page -->
+   <div id="signup-page" class="page" style="display: none;">
+    <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-12">
+     <h2 class="text-4xl font-bold mb-8 text-center">สมัครสมาชิก</h2>
+     <div class="rounded-2xl shadow-xl p-8">
+      <form id="signup-form" onsubmit="handleSignup(event)">
+       <div class="mb-6"><label for="signup-name" class="block text-sm font-semibold mb-2">ชื่อ-นามสกุล</label> <input type="text" id="signup-name" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all" placeholder="กรุณากรอกชื่อ-นามสกุล">
+       </div>
+       <div class="mb-6"><label for="signup-email" class="block text-sm font-semibold mb-2">อีเมล</label> <input type="email" id="signup-email" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all" placeholder="example@email.com">
+       </div>
+       <div class="mb-8"><label for="signup-password" class="block text-sm font-semibold mb-2">รหัสผ่าน</label> <input type="password" id="signup-password" required minlength="6" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all" placeholder="อย่างน้อย 6 ตัวอักษร">
+       </div><button type="submit" id="signup-button" class="w-full py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"> สมัครสมาชิก </button>
+      </form>
+      <div id="signup-success" class="mt-6 p-4 rounded-lg hidden">
+       <p class="text-center font-semibold">✅ สมัครสมาชิกสำเร็จ!</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Cart Page -->
+   <div id="cart-page" class="page" style="display: none;">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+     <h2 class="text-4xl font-bold mb-8 text-center">ตะกร้าสินค้า</h2>
+     <div id="cart-items" class="space-y-4 mb-8"><!-- Cart items will be rendered here -->
+     </div>
+     <div id="cart-empty" class="text-center py-16" style="display: none;">
+      <div class="text-6xl mb-4">
+       🛒
+      </div>
+      <p class="text-xl opacity-60">ตะกร้าสินค้าว่างเปล่า</p><button onclick="showPage('products')" class="mt-6 px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"> เลือกซื้อสินค้า </button>
+     </div>
+     <div id="cart-summary" class="rounded-2xl shadow-xl p-8" style="display: none;">
+      <div class="flex justify-between items-center text-2xl font-bold mb-6"><span>ราคารวม:</span> <span id="cart-total">฿0</span>
+      </div><button onclick="checkout()" class="w-full py-4 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"> ชำระเงิน </button>
+     </div>
+    </div>
+   </div>
+
+   <!-- Product Detail Modal -->
+   <div id="product-modal" class="modal-overlay">
+    <div class="modal-content" style="position: relative;">
+      <button class="modal-close-btn" onclick="closeProductModal()">✕</button>
+      <div id="modal-product-image" class="product-emoji-modal"></div>
+      <h2 id="modal-product-name" class="text-3xl font-bold mb-4"></h2>
+      <p id="modal-product-description" class="text-lg opacity-80 mb-6 leading-relaxed"></p>
+      <div class="flex items-center justify-between mb-6">
+        <p id="modal-product-price" class="text-3xl font-bold"></p>
+      </div>
+      <button id="modal-add-to-cart-btn" class="w-full py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all text-white">
+        หยิบใส่ตะกร้า
+      </button>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      background_color: "#f8fafc",
+      surface_color: "#ffffff",
+      text_color: "#1e293b",
+      primary_action_color: "#3b82f6",
+      secondary_action_color: "#64748b",
+      company_name: "SoleCraft",
+      slogan: "Step into Style & Comfort",
+      phone_number: "084-980-9044",
+      email_address: "dooooom1234567890@gmail.com",
+      address: "123 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110",
+      font_family: "Kanit",
+      font_size: 16
+    };
+
+    let cart = [];
+    let currentPage = 'home';
+    let userData = [];
+    let selectedProduct = null;
+
+    const products = [
+      { 
+        id: 1, 
+        name: "รองเท้าแตะ Single Band Slide", 
+        price: 1990,
+        emoji: "👟",
+        image: "9.jpg",
+        description: "รองเท้าแตะสไตล์ Single Band Slide ที่มีดีไซน์สมัยใหม่ สวมใส่สบายและเหมาะสำหรับใส่ในชีวิตประจำวัน วัสดุหนาทนทำให้ใช้ได้นาน"
+      },
+      { 
+        id: 2, 
+        name: "AeroWalk", 
+        price: 649,
+        emoji: "👟",
+        image: "10.jpg",
+        description: "ดีไซน์สายคาดคู่แบบปรับระดับได้ (Velcro strap) เพิ่มความกระชับเป็นพิเศษและดูพรีเมียมด้วยวัสดุโทนสีน้ำตาลคลาสสิก  ดีไซน์สายคาดเดี่ยวหน้ากว้าง สวมง่าย เหมาะกับวันพักผ่อนที่ต้องการความรวดเร็วแต่ยังดูดี โดดเด่นด้วยตราโลโก้รูปนกนางนวลของ SoleCraft บนวงกลมสีขาว สะท้อนถึงความเป็นอิสระ"
+      },
+      { 
+        id: 3, 
+        name: "Nil-Nara Sapphire Edge", 
+        price: 1490,
+        emoji: "👡",
+        image: "1.jpg",
+        description: "รองเท้าแตะรัดส้นสีขาวดีไซน์สปอร์ตจาก SoleCraft ผลิตจากวัสดุคุณภาพสูง น้ำหนักเบา และระบายอากาศได้ดี สายรัดปรับระดับได้เพื่อความกระชับพอดีเท้า พื้นรองเท้าออกแบบมาให้ยึดเกาะได้ดีเยี่ยม เหมาะสำหรับกิจกรรมกลางแจ้งและการเดินทางที่ต้องการความคล่องตัว"
+      },
+      { 
+        id: 4, 
+        name: "Nil-Nara Collection", 
+        price: 1290,
+        emoji: "🎩",
+        image: "2.jpg",
+        description: "Design: ทรง Gladiator รัดส้นแบบพันสายหนัง ดีไซน์โฉบเฉี่ยวสไตล์ Urban แฝงความคลาสสิกของยุคโรมัน Material: ผลิตจากหนังคุณภาพสูง สีดำด้าน (Matte Black) ให้ลุคที่ดูเท่และพรีเมียม สายรัดมีความยืดหยุ่นไม่บาดผิว Comfort: พื้นรองเท้าซับด้วยแผ่นรองนุ่มโทนสีน้ำตาล อัดแน่นด้วยวัสดุรองรับแรงกระแทก ช่วยให้เดินบนทางเท้าหรือพื้นหินได้นานโดยไม่เจ็บฝ่าเท้า"
+      },
+      { 
+        id: 5, 
+        name: "Aqua-Neon Velocity", 
+        price: 1690,
+        emoji: "🥾",
+        image: "3.jpg",
+        description: "Vibrant Breathable Mesh: หน้าผ้าตาข่ายสีน้ำเงินสด ระบายอากาศดีเยี่ยม ลดความร้อนขณะวิ่ง Neon Comfort Lining: ซับในสีเขียวมะนาว นุ่มกระชับข้อเท้า เพิ่มสีสันที่โฉบเฉี่ยว Lightweight Response: พื้นโฟมสีขาวน้ำหนักเบา รองรับแรงกระแทกและส่งแรงคืนได้ดี Signature Logo Patch: ตราสัญลักษณ์รูปนกขนาดใหญ่ด้านข้าง เพิ่มเอกลักษณ์ที่เป็นสไตล์เฉพาะตัว"
+      },
+      { 
+        id: 6, 
+        name: "Shadow Dash", 
+        price: 1290,
+        emoji: "🏖️",
+        image: "4.jpg",
+        description: "Engineered Mesh: หน้าผ้าตาข่ายยืดหยุ่นสูง ระบายความร้อนได้รวดเร็ว Lightweight EVA: พื้นโฟมน้ำหนักเบาพิเศษ ช่วยรองรับแรงกระแทกขณะวิ่ง Reflective Logo: โลโก้สะท้อนแสง เพิ่มความปลอดภัยเมื่อใช้งานในที่แสงน้อย"
+      },
+      { 
+        id: 7, 
+        name: "Velocity Blaze", 
+        price: 1890,
+        emoji: "🏖️",
+        image: "5.jpg",
+        description: "ผ้าตาข่ายยืดหยุ่นสูง: อัปเปอร์ปรับตามรูปเท้า เคลื่อนไหวคล่องตัวทุกท่วงท่า พื้นรองรับแรงกระแทก: ช่วยซับแรงที่ส้นเท้าและส่งแรงสปริงตัวไปด้านหน้า ดอกยางยึดเกาะพิเศษ: กันลื่นได้ทุกสภาพพื้นผิว ทั้งถนน ปูน และหญ้า"
+      },
+      { 
+        id: 8, 
+        name: "Sky Swift", 
+        price: 1890,
+        emoji: "🏖️",
+        image: "6.jpg",
+        description: "คุณสมบัติ: เน้นการทำความเร็วด้วยเทคโนโลยีพื้นรองเท้าแบบ Bounce-Back ที่ช่วยส่งแรงสปริงในทุกก้าว ตัวผ้าเป็น Engineered Mesh ระบายอากาศดีเยี่ยม เหมาะสำหรับการวิ่งและการออกกำลังกายที่เน้นความคล่องตัวสูง"
+      },
+      { 
+        id: 9, 
+        name: "Neo Pink", 
+        price: 2190,
+        emoji: "🏖️",
+        image: "7.jpg",
+        description: "Vibrant Aesthetic: ตัวรองเท้าสีชมพูสดใส ตัดกับโลโก้นกสีขาว/เงิน ให้ลุคที่ดูทันสมัยและมั่นใจ Dynamic Support: ดีไซน์หุ้มข้อช่วยเพิ่มความมั่นคงในการเปลี่ยนทิศทางอย่างรวดเร็ว Precision Grip: ชุดปุ่มสตั๊ดที่ออกแบบมาเพื่อการยึดเกาะสูงสุด ทั้งในสนามหญ้าจริงและหญ้าเทียม Water-Resistant Coating: พื้นผิววัสดุพิเศษที่ช่วยกันน้ำและทำความสะอาดง่าย แม้จะใส่ลุยในสนามที่เปียกชื้น"
+      },
+      { 
+        id: 10, 
+        name: "Neo Purple Flare", 
+        price: 1890,
+        emoji: "🏖️",
+        image: "8.jpg",
+        description: "หุ้มข้อผ้ายืดกระชับเหมือนใส่ถุงเท้า ช่วยเพิ่มความมั่นใจและลดการบาดเจ็บ ผิวสัมผัสอัดลายกราฟิกช่วยให้คอนโทรลลูกบอลได้แม่นยำทั้งการส่งและการยิง ชุดปุ่มสตั๊ดดีไซน์พิเศษยึดเกาะดีเยี่ยมทั้งหญ้าจริงและหญ้าเทียมเพื่อการออกตัวที่รวดเร็ว ตัวรองเท้าทำจากวัสดุน้ำหนักเบาและทนทาน ช่วยลดความเมื่อยล้าของกล้ามเนื้อได้ตลอดการแข่งขัน"
+      },
+    ];
+
+    function onConfigChange(config) {
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+      document.body.style.background = backgroundColor;
+      document.body.style.color = textColor;
+
+      const navbar = document.getElementById('navbar');
+      navbar.style.background = surfaceColor;
+      navbar.style.color = textColor;
+
+      const svgPaths = navbar.querySelectorAll('svg path');
+      svgPaths.forEach(path => {
+        path.style.color = primaryColor;
+      });
+
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(link => {
+        link.style.color = textColor;
+      });
+
+      const homePage = document.querySelector('#home-page > div:first-child > div');
+      homePage.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      homePage.style.color = '#ffffff';
+
+      const homeCompanyName = document.getElementById('home-company-name');
+      homeCompanyName.textContent = config.company_name || defaultConfig.company_name;
+      homeCompanyName.style.fontSize = `${baseSize * 3.75}px`;
+
+      const navCompanyName = document.getElementById('nav-company-name');
+      navCompanyName.textContent = config.company_name || defaultConfig.company_name;
+      navCompanyName.style.fontSize = `${baseSize * 1.5}px`;
+      navCompanyName.style.color = textColor;
+
+      const homeSlogan = document.getElementById('home-slogan');
+      homeSlogan.textContent = config.slogan || defaultConfig.slogan;
+      homeSlogan.style.fontSize = `${baseSize * 1.875}px`;
+
+      const ctaButtons = document.querySelectorAll('#home-page button, #cart-empty button, #signup-button, #cart-summary button, #modal-add-to-cart-btn');
+      ctaButtons.forEach(button => {
+        button.style.background = primaryColor;
+        button.style.color = '#ffffff';
+      });
+
+      const featureCards = document.querySelectorAll('#home-page .grid > div');
+      featureCards.forEach(card => {
+        card.style.background = surfaceColor;
+        card.style.color = textColor;
+      });
+
+      const productCards = document.querySelectorAll('.product-card');
+      productCards.forEach(card => {
+        card.style.background = surfaceColor;
+        card.style.color = textColor;
+      });
+
+      const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+      addToCartButtons.forEach(button => {
+        button.style.background = primaryColor;
+        button.style.color = '#ffffff';
+      });
+
+      const contactCard = document.querySelector('#contact-page .rounded-2xl');
+      if (contactCard) {
+        contactCard.style.background = surfaceColor;
+        contactCard.style.color = textColor;
+      }
+
+      const contactAddress = document.getElementById('contact-address');
+      contactAddress.textContent = config.address || defaultConfig.address;
+
+      const contactPhone = document.getElementById('contact-phone');
+      contactPhone.textContent = config.phone_number || defaultConfig.phone_number;
+
+      const contactEmail = document.getElementById('contact-email');
+      contactEmail.textContent = config.email_address || defaultConfig.email_address;
+
+      const signupCard = document.querySelector('#signup-page .rounded-2xl');
+      if (signupCard) {
+        signupCard.style.background = surfaceColor;
+        signupCard.style.color = textColor;
+      }
+
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.style.borderColor = secondaryColor;
+        input.style.color = textColor;
+      });
+
+      const cartItemCards = document.querySelectorAll('.cart-item-card');
+      cartItemCards.forEach(card => {
+        card.style.background = surfaceColor;
+        card.style.color = textColor;
+      });
+
+      const cartSummary = document.getElementById('cart-summary');
+      if (cartSummary) {
+        cartSummary.style.background = surfaceColor;
+        cartSummary.style.color = textColor;
+      }
+
+      const removeButtons = document.querySelectorAll('.remove-btn');
+      removeButtons.forEach(button => {
+        button.style.background = secondaryColor;
+        button.style.color = '#ffffff';
+      });
+
+      const cartBadge = document.getElementById('cart-badge');
+      cartBadge.style.background = primaryColor;
+      cartBadge.style.color = '#ffffff';
+
+      const successMessage = document.getElementById('signup-success');
+      if (successMessage) {
+        successMessage.style.background = `${primaryColor}20`;
+        successMessage.style.color = textColor;
+      }
+
+      const headings = document.querySelectorAll('h2, h3, h4');
+      headings.forEach(heading => {
+        const tagMultiplier = heading.tagName === 'H2' ? 2.5 : heading.tagName === 'H3' ? 1.5 : 1.25;
+        heading.style.fontSize = `${baseSize * tagMultiplier}px`;
+        heading.style.color = textColor;
+      });
+
+      const labels = document.querySelectorAll('label');
+      labels.forEach(label => {
+        label.style.fontSize = `${baseSize * 0.875}px`;
+        label.style.color = textColor;
+      });
+
+      // Update modal styling
+      const modalContent = document.querySelector('.modal-content');
+      if (modalContent) {
+        modalContent.style.background = surfaceColor;
+        modalContent.style.color = textColor;
+      }
+    }
+
+    const dataHandler = {
+      onDataChanged(data) {
+        userData = data;
+      }
+    };
+
+    function showPage(pageName) {
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(page => page.style.display = 'none');
+      
+      document.getElementById(`${pageName}-page`).style.display = 'block';
+      currentPage = pageName;
+      
+      if (pageName === 'products') {
+        renderProducts();
+      } else if (pageName === 'cart') {
+        renderCart();
+      }
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      
+      grid.innerHTML = products.map(product => `
+        <div class="product-card rounded-2xl shadow-lg p-6" style="background: ${surfaceColor}; color: ${textColor};" onclick="openProductModal(${product.id})">
+          <div class="mb-4 text-center">
+            ${product.image ? `<img src="${product.image}" class="w-full h-48 object-contain rounded-xl mx-auto" alt="${product.name}">` : `<div class="text-7xl">${product.emoji}</div>`}
+          </div>
+          <h3 class="text-xl font-bold mb-2">${product.name}</h3>
+          <p class="text-2xl font-bold mb-4">฿${product.price.toLocaleString()}</p>
+          <button 
+            onclick="event.stopPropagation(); addToCart(${product.id})" 
+            class="add-to-cart-btn w-full py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all"
+            style="background: ${primaryColor}; color: #ffffff;"
+          >
+            หยิบใส่ตะกร้า
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function openProductModal(productId) {
+      selectedProduct = products.find(p => p.id === productId);
+      if (!selectedProduct) return;
+
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+
+      document.getElementById('modal-product-name').textContent = selectedProduct.name;
+      document.getElementById('modal-product-description').textContent = selectedProduct.description;
+      document.getElementById('modal-product-price').textContent = `฿${selectedProduct.price.toLocaleString()}`;
+      
+      const imageContainer = document.getElementById('modal-product-image');
+      if (selectedProduct.image) {
+        imageContainer.innerHTML = `<img src="${selectedProduct.image}" class="product-image-modal" alt="${selectedProduct.name}">`;
+      } else {
+        imageContainer.innerHTML = `<div class="product-emoji-modal">${selectedProduct.emoji}</div>`;
+      }
+
+      const addBtn = document.getElementById('modal-add-to-cart-btn');
+      addBtn.style.background = primaryColor;
+      addBtn.onclick = () => {
+        addToCart(selectedProduct.id);
+        closeProductModal();
+      };
+
+      const modal = document.getElementById('product-modal');
+      modal.classList.add('active');
+    }
+
+    function closeProductModal() {
+      const modal = document.getElementById('product-modal');
+      modal.classList.remove('active');
+      selectedProduct = null;
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('product-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeProductModal();
+      }
+    });
+
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+      
+      updateCartBadge();
+      
+      const badge = document.getElementById('cart-badge');
+      badge.classList.add('pulse');
+      setTimeout(() => badge.classList.remove('pulse'), 300);
+    }
+
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      updateCartBadge();
+      renderCart();
+    }
+
+    function updateCartBadge() {
+      const badge = document.getElementById('cart-badge');
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      
+      if (totalItems > 0) {
+        badge.textContent = totalItems;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function renderCart() {
+      const cartItems = document.getElementById('cart-items');
+      const cartEmpty = document.getElementById('cart-empty');
+      const cartSummary = document.getElementById('cart-summary');
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+      
+      if (cart.length === 0) {
+        cartItems.innerHTML = '';
+        cartEmpty.style.display = 'block';
+        cartSummary.style.display = 'none';
+        return;
+      }
+      
+      cartEmpty.style.display = 'none';
+      cartSummary.style.display = 'block';
+      
+      cartItems.innerHTML = cart.map(item => `
+        <div class="cart-item-card rounded-xl shadow-lg p-6 flex items-center justify-between" style="background: ${surfaceColor}; color: ${textColor};">
+          <div class="flex items-center space-x-4">
+            <div class="w-16 h-16 flex-shrink-0">
+              ${item.image ? `<img src="${item.image}" class="w-full h-full object-contain rounded-lg" alt="${item.name}">` : `<div class="text-4xl">${item.emoji}</div>`}
+            </div>
+            <div>
+              <h3 class="font-bold text-lg">${item.name}</h3>
+              <p class="opacity-80">฿${item.price.toLocaleString()} × ${item.quantity}</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <p class="font-bold text-xl">฿${(item.price * item.quantity).toLocaleString()}</p>
+            <button 
+              onclick="removeFromCart(${item.id})" 
+              class="remove-btn px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity"
+              style="background: ${secondaryColor}; color: #ffffff;"
+            >
+              ลบ
+            </button>
+          </div>
+        </div>
+      `).join('');
+      
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      document.getElementById('cart-total').textContent = `฿${total.toLocaleString()}`;
+    }
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const button = document.getElementById('signup-button');
+      
+      button.disabled = true;
+      button.textContent = 'กำลังสมัคร...';
+      
+      const result = await window.dataSdk.create({
+        id: Date.now().toString(),
+        type: 'user',
+        name: name,
+        email: email,
+        password: password,
+        created_at: new Date().toISOString()
+      });
+      
+      button.disabled = false;
+      button.textContent = 'สมัครสมาชิก';
+      
+      if (result.isOk) {
+        document.getElementById('signup-form').reset();
+        const successMessage = document.getElementById('signup-success');
+        successMessage.classList.remove('hidden');
+        setTimeout(() => {
+          successMessage.classList.add('hidden');
+        }, 3000);
+      } else {
+        const successMessage = document.getElementById('signup-success');
+        const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+        const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        successMessage.style.background = `${secondaryColor}20`;
+        successMessage.innerHTML = '<p class="text-center font-semibold">❌ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง</p>';
+        successMessage.classList.remove('hidden');
+        setTimeout(() => {
+          successMessage.classList.add('hidden');
+        }, 3000);
+      }
+    }
+
+    function checkout() {
+      if (cart.length === 0) return;
+      
+      const checkoutMessage = document.createElement('div');
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      checkoutMessage.style.position = 'fixed';
+      checkoutMessage.style.top = '50%';
+      checkoutMessage.style.left = '50%';
+      checkoutMessage.style.transform = 'translate(-50%, -50%)';
+      checkoutMessage.style.background = primaryColor;
+      checkoutMessage.style.color = '#ffffff';
+      checkoutMessage.style.padding = '32px 48px';
+      checkoutMessage.style.borderRadius = '16px';
+      checkoutMessage.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+      checkoutMessage.style.zIndex = '1000';
+      checkoutMessage.style.fontSize = '24px';
+      checkoutMessage.style.fontWeight = 'bold';
+      checkoutMessage.innerHTML = '✅ ขอบคุณสำหรับการสั่งซื้อ!';
+      document.body.appendChild(checkoutMessage);
+      
+      setTimeout(() => {
+        document.body.removeChild(checkoutMessage);
+        cart = [];
+        updateCartBadge();
+        showPage('home');
+      }, 2000);
+    }
+
+    const baseSize = 16;
+
+    async function init() {
+      const dataResult = await window.dataSdk.init(dataHandler);
+      if (!dataResult.isOk) {
+        console.error('Failed to initialize data SDK');
+      }
+
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  config.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => {
+                  config.surface_color = value;
+                  window.elementSdk.setConfig({ surface_color: value });
+                }
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  config.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              },
+              {
+                get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                set: (value) => {
+                  config.primary_action_color = value;
+                  window.elementSdk.setConfig({ primary_action_color: value });
+                }
+              },
+              {
+                get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                set: (value) => {
+                  config.secondary_action_color = value;
+                  window.elementSdk.setConfig({ secondary_action_color: value });
+                }
+              }
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => config.font_family || defaultConfig.font_family,
+              set: (value) => {
+                config.font_family = value;
+                window.elementSdk.setConfig({ font_family: value });
+              }
+            },
+            fontSizeable: {
+              get: () => config.font_size || defaultConfig.font_size,
+              set: (value) => {
+                config.font_size = value;
+                window.elementSdk.setConfig({ font_size: value });
+              }
+            }
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ["company_name", config.company_name || defaultConfig.company_name],
+            ["slogan", config.slogan || defaultConfig.slogan],
+            ["phone_number", config.phone_number || defaultConfig.phone_number],
+            ["email_address", config.email_address || defaultConfig.email_address],
+            ["address", config.address || defaultConfig.address]
+          ])
+        });
+      }
+
+      renderProducts();
+      onConfigChange(defaultConfig);
+    }
+
+    init();
+  </script>
+ </body>
+</html>
